@@ -1,0 +1,10 @@
+[
+	{ "keys": ["super+ctrl+o"], "command": "runapp",
+		"args":{
+			"app":"",
+			"args": ["$FILE$"],
+			"type":"none",
+			"macopen":"open"
+		}
+	}
+]

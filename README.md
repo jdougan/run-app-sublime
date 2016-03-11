@@ -5,6 +5,8 @@ Run any customized application from command palette. Just Ctrl/Command+Shift+P, 
 
 ![effect](./imgs/screenshot.png)
 
+NEW! Works in Sublime Text 2. Added extension to cover a variety of options for opening in MacOS X.
+
 ## Installation Instructions
 
 **Package Installer**

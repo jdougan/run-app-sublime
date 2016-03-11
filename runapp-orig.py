@@ -3,19 +3,7 @@ import sublime
 import sublime_plugin
 
 class RunappCommand(sublime_plugin.WindowCommand):
-    def stvers():
-        # Last stable release Mac build number
-        # may need adjustment for other platforms. 
-        vers = None
-        if int(sublime.version()) <= 2221:
-            vers = 2
-        else:
-            vers = 3
-        return vers
-
-    def run(self, app = "", args = [], type = "" , macopen = "default"):
-        vers = this.stvers()
-
+    def run(self, app = "", args = [], type = ""):
         # get the string of $FILE$
         file_s = self.window.active_view().file_name()
 
@@ -23,12 +11,8 @@ class RunappCommand(sublime_plugin.WindowCommand):
         dir_s = os.path.split(file_s)[0]
 
         # get the string of $PROJ$
-        # ST2 has no ptoject data
         proj_s = None
-        if vers >= 3 :
-            data = sublime.active_window().project_data()
-        else:
-            data = None
+        data = sublime.active_window().project_data()
         if data != None:
             for folder in data['folders']:
                 proj_s = folder['path']
@@ -70,25 +54,10 @@ class RunappCommand(sublime_plugin.WindowCommand):
             # ? subprocess.Popen can't work with msys_git 2.5.3
             exec_s = ' '.join(['"'+app+'"'] + args + [target])
             # print(exec_s)
-            args_s = ' '.join( args + [target])
-            # print (args_s)
+
             if sublime.platform() == 'osx':
-                if macopen == "unix":
-                    # Just like windows and linux, use when you want to specify 
-                    # a command line program.
-                    os.popen(exec_s)
-                elif macopen == "open":
-                    # Assume thet the open(1) command will work
-                    # and ignore the specified app
-                    os.popen('open ' + args_s)
-                elif macopen == "plumb":
-                    # If you have the Plan 9 from Userspace plumbing installed
-                    # let the plumbing file figure it out and ignore the
-                    # specified app
-                    os.popen('open -a Plumb.app ' + args_s)
-                else:
-                    # subprocess.Popen(['open', '-a', app] + args + [target])
-                    os.popen('open -a ' + exec_s)
+                # subprocess.Popen(['open', '-a', app] + args + [target])
+                os.popen('open -a ' + exec_s)
             else:
                 # subprocess.Popen([app] + args + [target])
                 os.popen(exec_s)
@@ -100,8 +69,6 @@ class RunappCommand(sublime_plugin.WindowCommand):
 
 class AddappCommand(sublime_plugin.WindowCommand):
     def run(self):
-        vers = this.stvers()
-        # print 'VERSION' , vers , sublime.version()
         cmdFile = os.path.join(sublime.packages_path(), 'User', 'Run App.sublime-commands')
         if not os.path.isfile(cmdFile):
             # os.makedirs(cmdFile, 0o775)
@@ -127,34 +94,8 @@ class AddappCommand(sublime_plugin.WindowCommand):
         }
 
     },
-    {
-        "caption": "Open: Mac Open",  // Open file with open(1) on OSX
-        "command": "runapp",
-        "args":{
-          // application full path on Win/Linux, or only name on MAC
-          // ignored with macopen:"open"
-          "app": "", 
-
-          // argument list
-          // variables can be use: $DIR$, $FILE$, $PROJ$
-          "args": ["$FILE$"],
-
-          // define what should follow the command:
-          // "dir" - file directory, same as $DIR$
-          // "file" - file name, same as $FILE$
-          // "proj" - project directory, same as $PROJ$
-          // "none" - nothing: if args use variables, "type" must be "none"
-          "type": "none",
-          "macopen" : "open"
-        }
-    }
-
 ]"""
-
-            if vers == 3:
-                open(cmdFile, 'w+', encoding='utf8', newline='').write(str(content))
-            else:
-                open(cmdFile, 'w+').write(str(content))
+            open(cmdFile, 'w+', encoding='utf8', newline='').write(str(content))
         sublime.active_window().open_file(cmdFile)
 
     def is_enabled(self):
