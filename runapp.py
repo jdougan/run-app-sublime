@@ -3,7 +3,7 @@ import sublime
 import sublime_plugin
 
 class RunappCommand(sublime_plugin.WindowCommand):
-    def stvers():
+    def stvers(self):
         # Last stable release Mac build number
         # may need adjustment for other platforms. 
         vers = None
@@ -14,7 +14,7 @@ class RunappCommand(sublime_plugin.WindowCommand):
         return vers
 
     def run(self, app = "", args = [], type = "" , macopen = "default"):
-        vers = this.stvers()
+        vers = self.stvers()
 
         # get the string of $FILE$
         file_s = self.window.active_view().file_name()
@@ -85,7 +85,11 @@ class RunappCommand(sublime_plugin.WindowCommand):
                     # If you have the Plan 9 from Userspace plumbing installed
                     # let the plumbing file figure it out and ignore the
                     # specified app
-                    os.popen('open -a Plumb.app ' + args_s)
+                    # os.popen('open -a Plumb.app ' + args_s)
+                    # The above method for plumb has issues with file names with spaces.
+                    # If the install is via homebrew, this should work.
+                    #os.popen('/usr/local/bin/9 plumb ' + args_s)
+                    print("Run Apps: Plumb option not currently supported")
                 else:
                     # subprocess.Popen(['open', '-a', app] + args + [target])
                     os.popen('open -a ' + exec_s)
@@ -100,7 +104,7 @@ class RunappCommand(sublime_plugin.WindowCommand):
 
 class AddappCommand(sublime_plugin.WindowCommand):
     def run(self):
-        vers = this.stvers()
+        vers = self.stvers()
         # print 'VERSION' , vers , sublime.version()
         cmdFile = os.path.join(sublime.packages_path(), 'User', 'Run App.sublime-commands')
         if not os.path.isfile(cmdFile):
